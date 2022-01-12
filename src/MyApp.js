@@ -13,14 +13,17 @@ function removeOneCharacter (index) {
     setCharacters(updated);
   }
 
-  function updateList(person) {
-    setCharacters([...characters, person]);
-  }
+  function updateList(person) { 
+    makePostCall(person).then( result => {
+    if (result && result.status === 200)
+       setCharacters([...characters, person] );
+    });
+ }
 
   async function fetchAll(){
     try {
        const response = await axios.get('http://localhost:5000/users');
-       console.log(response);
+       console.log(response)
        return response.data.users_list;     
     }
     catch (error){
@@ -29,6 +32,17 @@ function removeOneCharacter (index) {
        return false;         
     }
  }
+
+ async function makePostCall(person){
+  try {
+     const response = await axios.post('http://localhost:5000/users', person);
+     return response;
+  }
+  catch (error) {
+     console.log(error);
+     return false;
+  }
+}
 
  useEffect(() => {
   fetchAll().then( result => {
