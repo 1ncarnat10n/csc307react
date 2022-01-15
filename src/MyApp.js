@@ -7,23 +7,24 @@ function MyApp() {
   const [characters, setCharacters] = useState([]);
 
 function removeOneCharacter (index) {
+  const deleted = characters[index];
   const updated = characters.filter((character, i) => {
       return i !== index
     });
+    deleteFromBack(deleted['id']);
     setCharacters(updated);
   }
 
   function updateList(person) { 
     makePostCall(person).then( result => {
-    if (result && result.status === 200)
-       setCharacters([...characters, person] );
+    if (result && result.status === 201)
+       setCharacters([...characters, result.data] );
     });
  }
 
   async function fetchAll(){
     try {
        const response = await axios.get('http://localhost:5000/users');
-       console.log(response)
        return response.data.users_list;     
     }
     catch (error){
@@ -42,6 +43,18 @@ function removeOneCharacter (index) {
      console.log(error);
      return false;
   }
+}
+
+async function deleteFromBack(id){
+   try {
+     const response = await axios.delete('http://localhost:5000/users/' + id);
+     return response.data.users_list;
+   }
+   catch (error){
+     //We're not handling errors. Just logging into the console.
+     console.log(error); 
+     return false;      
+   }
 }
 
  useEffect(() => {
